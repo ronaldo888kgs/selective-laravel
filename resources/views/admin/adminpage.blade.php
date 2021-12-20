@@ -13,9 +13,16 @@
     ?>
     <div style="background-color:white; border-radius:5px; margin: 0px 10px;">
         <div class="d-flex justify-content-between" style="padding: 20px 10px; position: relative">
-            <div class="d-flex justify-content-between">
+            <div class="d-flex justify-content-between align-items-end" style="width:100%">
                 <div>
                     <h1>Welcome: Admin</h1>
+                </div>
+                <div>
+                    <button 
+                    class="btn btn-success"
+                    data-bs-toggle="modal" 
+                    data-bs-target="#newMailerModal" 
+                    >Add New Mailer</button>
                 </div>
             </div>
 
@@ -172,6 +179,8 @@
                 </div>
             </div>
         </div>
+
+        @include('admin.new-mailer')
         
     </div>
     
@@ -181,7 +190,59 @@
         var selectedNumber = "";
         var selectedID = "";
 
-       
+        function validationEmail(email)
+        {
+            if(!email.match(/^(([^<>()[\]\\.,;:\s@\"]+(\.[^<>()[\]\\.,;:\s@\"]+)*)|(\".+\"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/))
+                return false;        
+            return true;
+        }
+       function addNewMailerInfo()
+       {
+            var first_name = document.getElementById('input-first-name').value;
+            var last_name = document.getElementById('input-last-name').value;
+            var email = document.getElementById('input-email').value;
+            var telegram_id = document.getElementById('input-telegram').value;
+            var discord_id = document.getElementById('input-discord').value;
+            var twitter_id = document.getElementById('input-twitter').value;
+            var slack_id = document.getElementById('input-slack').value;
+            var mobile_number = document.getElementById('input-phone').value;
+            var groud_id = document.getElementById('select_mailer_category').value;
+            if(email != '' && validationEmail(email) == false)
+            {
+                return;
+            }
+
+            console.log(groud_id);
+
+            $.ajax({
+                    url: "{{ route('add_contact') }}",
+                    method: 'post',
+                    dataType: "json",
+                    data: {
+                        first_name: first_name,
+                        last_name: last_name,
+                        email: email,
+                        telegram_id: telegram_id,
+                        discord_id: discord_id,
+                        twitter_id:twitter_id,
+                        slack_id: slack_id,
+                        phone: mobile_number,
+                        type: 0,
+                        group_id:groud_id
+                    },
+                    success: function(data) {
+                        if(data.status == true)
+                        {
+                            //$('#newMailerModal').modal('hide');
+                            //window.location.reload();
+                            window.location.href = "/adddata";
+                        }
+                        if(data.status == false)
+                        {
+                        }
+                    }
+                });
+       }
 
         function calcNetDifference()
         {

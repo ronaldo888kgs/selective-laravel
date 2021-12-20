@@ -14,6 +14,7 @@ use App\Exports\FieldsExport;
 use Illuminate\Support\Facades\Auth;
 use App\Models\Visitorssignal;
 use App\Events\NewDataArrivedEvent;
+use App\Models\MailCategory;
 class AdminController extends Controller
 {
     public function getAveragePercent($cat_id)
@@ -23,6 +24,7 @@ class AdminController extends Controller
     }
     public function __invoke()
     {
+        $mailer_categories = MailCategory::all();
         $categories = FieldCategory::all();
         $fields = FieldData::orderByRaw('created_at desc')->where(function ($query) use ($categories){
             $query->where('category', '=', $categories[0]->id);
@@ -60,11 +62,13 @@ class AdminController extends Controller
             "ameri_api_key" => $ameri_apikey,
             "ameri_base_url" => $ameri_base_url,
             "ameri_access_token" => $ameri_access_token,
+            "mailer_categories" => $mailer_categories
         ]);
     }
     public function index()
     {
         $categories = FieldCategory::all();
+        $mailer_categories = MailCategory::all();
         $fields = FieldData::orderByRaw('created_at desc')->where(function ($query) use ($categories){
             $query->where('category', '=', $categories[0]->id);
         })->paginate(150);
@@ -98,6 +102,7 @@ class AdminController extends Controller
             "ameri_api_key" => $ameri_apikey,
             "ameri_base_url" => $ameri_base_url,
             "ameri_access_token" => $ameri_access_token,
+            "mailer_categories" => $mailer_categories
         ]);
         
     }
@@ -105,6 +110,7 @@ class AdminController extends Controller
     public function show($cat_id)
     {
         $categories = FieldCategory::all();
+        $mailer_categories = MailCategory::all();
         if($cat_id === "")
             $cat_id = $categories[0]->id;
         $fields = FieldData::orderByRaw('created_at desc')
@@ -141,6 +147,7 @@ class AdminController extends Controller
             "ameri_api_key" => $ameri_apikey,
             "ameri_base_url" => $ameri_base_url,
             "ameri_access_token" => $ameri_access_token,
+            "mailer_categories" => $mailer_categories
          ]);
     }
 
